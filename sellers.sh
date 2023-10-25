@@ -14,16 +14,25 @@ CBlanco="\e[0;37m\033[1m"
 CFin="\033[0m\e[0m"
 
 arg=$#
-url="https://"$1"//sellers.json"
+url="https://"$1"/sellers.json"
+estado=$(curl -s $url --head | grep 200 | awk '{print $2}')
 
 echo -e "\n${CVerde}[+]${CFin} ${CBlanco}La url a filtrar es: $1${CFin}"
 echo -e "-----------------------------------\n"
 
-if [ $arg >1 ]
+if [[ "$estado" == "200" ]];
 then
-	curl -s $url | awk -F'[:,]' '/"name"/{name=$4; gsub("\"", "", name)} /"domain"/{domain=$6; gsub("\"", "", domain); print "Name: " name " - Domain: " domain}' | grep "$2"
+
+
+	if [ $arg >1 ]
+	then
+		curl -s $url | awk -F'[:,]' '/"name"/{name=$4; gsub("\"", "", name)} /"domain"/{domain=$6; gsub("\"", "", domain); print "Name: " name " - Domain: " domain}' | grep "$2"
+	else
+		curl -s $url | awk -F'[:,]' '/"name"/{name=$4; gsub("\"", "", name)} /"domain"/{domain=$6; gsub("\"", "", domain); print "Name: " name " - Domain: " domain}'
+	fi
+
 else
-	curl -s $url | awk -F'[:,]' '/"name"/{name=$4; gsub("\"", "", name)} /"domain"/{domain=$6; gsub("\"", "", domain); print "Name: " name " - Domain: " domain}'
+	echo "${CRojo}[+] La url pasada no dispone de archivo sellers.Json${CFin}\n"
 fi
 
 }
