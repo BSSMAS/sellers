@@ -29,10 +29,12 @@ then
 	if [ $arg >1 ]
 	then
 		echo -e "${CTurquesa}[+]${CFin} ${CTurquesa}Filtro activo: \t $2 ${CFin}"
-		echo -e "${CTurquesa}[+]${CFin} ${CTurquesa}Nº de registros: \t $NregistroFiltrada ${CFin} \n"
+		echo -e "${CTurquesa}[+]${CFin} ${CTurquesa}Nº de registros: \t $NregistroFiltrada ${CFin}"
+		echo -e "-----------------------------------"
 		curl -s $url | jq -r '.sellers[] | "Name: \(.name) - Domain: \(.domain)"' | grep "$2"
 	else
-		echo -e "${CTurquesa}[+]${CFin} ${CTurquesa}Nº de registros: \t $Nregistro ${CFin} \n"
+		echo -e "${CTurquesa}[+]${CFin} ${CTurquesa}Nº de registros: \t $Nregistro ${CFin}"
+		echo -e "-----------------------------------"
 		curl -s $url | jq -r '.sellers[] | "Name: \(.name) - Domain: \(.domain)"'
 	fi
 else
