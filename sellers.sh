@@ -13,11 +13,12 @@ CFin="\033[0m\e[0m"
 
 arg=$#
 url="https://"$1"/sellers.json"
-ComGit=$(which git)
-ComCurl=$(which curl)
-ComJQ=$(which jq)
 
-estado=$(curl -s $url --head | grep 200 | awk '{print $2}')
+ComGit=$(which git | awk '{print $2 $3}')
+ComCurl=$(which curl | awk '{print $2 $3}')
+ComJQ=$(which jq | awk '{print $2 $3}')
+
+estado=$(curl -s $url --head | grep 200 | awk '{print $2}' | head -1)
 Nregistro=$(curl -s $url | jq -r '.sellers[] | "Name: \(.name) - Domain: \(.domain)"' | wc | awk '{print $1}')
 NregistroFiltrada=$(curl -s $url | jq -r '.sellers[] | "Name: \(.name) - Domain: \(.domain)"' | grep "$2" | wc | awk '{print $1}')
 
@@ -31,11 +32,11 @@ then
 		echo -e "${CTurquesa}[+]${CFin} ${CTurquesa}Filtro activo: \t $2 ${CFin}"
 		echo -e "${CTurquesa}[+]${CFin} ${CTurquesa}Nº de registros: \t $NregistroFiltrada ${CFin}"
 		echo -e "-----------------------------------"
-		curl -s $url | jq -r '.sellers[] | "Name: \(.name) - Domain: \(.domain)"' | grep "$2"
+		curl -s $url | jq -r '.sellers[] | "\(.name) \t \(.domain) \t \(.seller_type)"' | grep "$2" | column -t -N Nombre:,Dominios:,Tipo: -s $'\t'
 	else
 		echo -e "${CTurquesa}[+]${CFin} ${CTurquesa}Nº de registros: \t $Nregistro ${CFin}"
 		echo -e "-----------------------------------"
-		curl -s $url | jq -r '.sellers[] | "Name: \(.name) - Domain: \(.domain)"'
+		curl -s $url | jq -r '.sellers[] | "\(.name) \t \(.domain)"' | column -t -N Nombre:,Dominios: -s $'\t'
 	fi
 else
 	echo -e "${CRojo}[+] La url pasada no dispone de archivo sellers.Json${CFin}\n"
